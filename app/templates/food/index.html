@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4 mt-3">
+    <h2 class="fw-bold text-success mb-0">即時剩食地圖與列表</h2>
+    <span class="text-muted"><i class="bi bi-clock"></i> 自動隱藏已下架或領完的餐點</span>
+</div>
+
+<div class="row g-4">
+    {% if foods %}
+        {% for food in foods %}
+        <div class="col-md-6 col-lg-4">
+            <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden transition-hover">
+                <div class="ratio ratio-16x9 bg-light">
+                    {% if food.image_path %}
+                        <img src="{{ url_for('static', filename=food.image_path) }}" class="object-fit-cover" alt="{{ food.name }}">
+                    {% else %}
+                        <div class="d-flex align-items-center justify-content-center h-100 text-muted bg-opacity-50">
+                            <span class="fs-4">🍽️ 尚無圖片</span>
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="card-body p-4 d-flex flex-column">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <h5 class="card-title fw-bold text-dark mb-0">{{ food.name }}</h5>
+                        <span class="badge bg-danger rounded-pill px-3 py-2">剩 {{ food.portion }} 份</span>
+                    </div>
+                    <p class="card-text text-muted small mb-3">📍 {{ food.restaurant.name }}</p>
+                    
+                    <div class="mt-auto pt-3 border-top d-flex justify-content-between align-items-center">
+                        <div>
+                            {% if food.discount_price == 0 %}
+                                <span class="fs-4 fw-bold text-success">免費領取</span>
+                            {% else %}
+                                <span class="fs-4 fw-bold text-success">${{ food.discount_price }}</span>
+                                {% if food.original_price %}
+                                <span class="text-muted text-decoration-line-through small ms-1">${{ food.original_price }}</span>
+                                {% endif %}
+                            {% endif %}
+                        </div>
+                        <a href="{{ url_for('food.detail', food_id=food.id) }}" class="btn btn-outline-success rounded-pill fw-bold">查看詳情</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <div class="col-12 text-center py-5 mt-4">
+            <h3 class="text-muted fw-bold">目前校園內還沒有剩食待救唷！</h3>
+            <p class="text-secondary mt-2">請稍候再回來看看，或者享受不製造剩食的一天 🌍</p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

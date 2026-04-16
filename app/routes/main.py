@@ -10,4 +10,4 @@ def index():
     處理邏輯: 查詢系統整體減少的碳排量與餐點數量，返回統計資料。
     輸出: 渲染 index.html 首頁
     """
-    pass
+    return render_template('index.html')

@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row mt-4 mb-5">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="fw-bold text-success mb-0">🍽️ 我的預約紀錄</h2>
+            <a href="{{ url_for('food.index') }}" class="btn btn-success rounded-pill px-4 shadow-sm">繼續找美食</a>
+        </div>
+        
+        <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+            <div class="card-body p-0">
+                {% if orders %}
+                <div class="table-responsive">
+                    <table class="table table-hover table-light mb-0 align-middle">
+                        <thead class="table-success opacity-75">
+                            <tr>
+                                <th class="py-3 px-4 text-center" width="80">狀態</th>
+                                <th class="py-3 px-4">訂單編號 / 建立時間</th>
+                                <th class="py-3 px-4">餐點內容</th>
+                                <th class="py-3 px-4 text-center">數量</th>
+                                <th class="py-3 px-4 text-center">原價 / 優惠價</th>
+                                <th class="py-3 px-4 text-end">動作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for order in orders %}
+                            <tr class="{% if order.status == 'completed' %}opacity-50{% endif %}">
+                                <td class="px-4 py-3 text-center">
+                                    {% if order.status == 'reserved' %}
+                                        <span class="badge bg-warning text-dark rounded-pill py-2 px-3 fw-bold">等待取餐</span>
+                                    {% elif order.status == 'completed' %}
+                                        <span class="badge bg-secondary rounded-pill py-2 px-3">已核銷</span>
+                                    {% else %}
+                                        <span class="badge bg-danger rounded-pill py-2 px-3">{{ order.status }}</span>
+                                    {% endif %}
+                                </td>
+                                <td class="px-4 py-3">
+                                    <div class="fw-bold">#{{ "%06d" | format(order.id) }}</div>
+                                    <div class="small text-muted">{{ order.created_at.strftime('%Y-%m-%d %H:%M') }}</div>
+                                </td>
+                                <td class="px-4 py-3">
+                                    <div class="fw-bold text-dark">{{ order.food.name }}</div>
+                                    <div class="small text-muted"><i class="bi bi-geo-alt"></i> {{ order.food.restaurant.name }}</div>
+                                </td>
+                                <td class="px-4 py-3 text-center fw-bold">{{ order.quantity }} 份</td>
+                                <td class="px-4 py-3 text-center">
+                                    {% if order.food.original_price %}
+                                        <span class="text-muted text-decoration-line-through small me-1">${{ order.food.original_price * order.quantity }}</span>
+                                    {% endif %}
+                                    {% set cost = order.food.discount_price * order.quantity %}
+                                    <span class="fw-bold text-success">{{ '免費' if cost == 0 else '$' ~ cost }}</span>
+                                </td>
+                                <td class="px-4 py-3 text-end">
+                                    <a href="{{ url_for('food.detail', food_id=order.food.id) }}" class="btn btn-sm btn-outline-success rounded-pill px-3">原餐點資訊</a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="text-center py-5">
+                    <div class="display-1 text-muted opacity-25 mb-3">📝</div>
+                    <h4 class="text-muted fw-bold">您目前還沒有任何預約！</h4>
+                    <p class="text-secondary">別讓美食落入垃圾桶，趕緊去剩食地圖挖寶吧！</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

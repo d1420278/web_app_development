@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row justify-content-center mt-4 mb-5">
+    <div class="col-md-7 col-lg-6">
+        <div class="card shadow-lg border-0 rounded-4">
+            <div class="card-body p-5">
+                <div class="text-center mb-4">
+                    <h2 class="fw-bold text-success">建立新帳號</h2>
+                    <p class="text-muted">加入我們，一起減少可以被拯救的美食！</p>
+                </div>
+                
+                <form action="{{ url_for('auth.register') }}" method="POST">
+                    <div class="mb-4 bg-light p-3 rounded-3 border">
+                        <label class="form-label fw-bold text-dark d-block">選擇您的註冊身分</label>
+                        <div class="d-flex gap-4">
+                            <div class="form-check">
+                                <input class="form-check-input border-success" type="radio" name="role" id="roleStudent" value="student" checked>
+                                <label class="form-check-label" for="roleStudent">
+                                    👨‍🎓 在校學生
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input border-success" type="radio" name="role" id="roleRestaurant" value="restaurant">
+                                <label class="form-check-label" for="roleRestaurant">
+                                    🧑‍🍳 校園餐廳業者
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="name" class="form-label fw-bold">顯示名稱</label>
+                        <input type="text" class="form-control form-control-lg bg-light" id="name" name="name" placeholder="請輸入您的真實姓名或餐廳名稱" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="email" class="form-label fw-bold">信箱帳號</label>
+                        <input type="email" class="form-control form-control-lg bg-light" id="email" name="email" placeholder="name@example.com" required>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label for="password" class="form-label fw-bold">密碼</label>
+                        <input type="password" class="form-control form-control-lg bg-light" id="password" name="password" placeholder="請設定 8 碼以上的密碼" required minlength="8">
+                    </div>
+                    
+                    <div class="d-grid gap-2 mt-4">
+                        <button type="submit" class="btn btn-success btn-lg rounded-pill fw-bold shadow-sm transition-hover">同意並註冊帳號</button>
+                    </div>
+                </form>
+                
+                <div class="text-center mt-4">
+                    <span class="text-muted">已經有帳號了？</span>
+                    <a href="{{ url_for('auth.login') }}" class="text-success text-decoration-none fw-bold ms-1">登入系統</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

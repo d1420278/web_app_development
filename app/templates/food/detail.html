@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row justify-content-center mt-4">
+    <div class="col-lg-10">
+        <a href="{{ url_for('food.index') }}" class="btn btn-link text-success text-decoration-none px-0 mb-3"><i class="bi bi-arrow-left"></i> 回剩食列表</a>
+        
+        <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+            <div class="row g-0">
+                <div class="col-md-6">
+                    <div class="h-100 bg-light d-flex align-items-center justify-content-center" style="min-height: 400px;">
+                        {% if food.image_path %}
+                            <img src="{{ url_for('static', filename=food.image_path) }}" class="img-fluid object-fit-cover w-100 h-100" alt="{{ food.name }}">
+                        {% else %}
+                            <span class="fs-1 text-muted opacity-50">🍽️ 尚無圖片</span>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card-body p-5 h-100 d-flex flex-column">
+                        <div class="mb-2 d-flex justify-content-between align-items-start">
+                            <h2 class="card-title fw-bold m-0">{{ food.name }}</h2>
+                            <span class="badge bg-danger rounded-pill px-3 py-2 fs-6 shadow-sm">剩餘 {{ food.portion }} 份</span>
+                        </div>
+                        <p class="text-muted fw-bold mb-4">📍 供應餐廳：{{ food.restaurant.name }}</p>
+                        
+                        <h4 class="mb-3 fw-bold">餐點簡介</h4>
+                        <p class="card-text text-secondary lh-lg mb-4">
+                            {{ food.description if food.description else '餐廳未提供詳細說明。' }}
+                        </p>
+                        
+                        <div class="p-3 bg-light rounded-3 mb-4 border border-white">
+                            <span class="text-muted small d-block mb-1">取餐下架期限</span>
+                            <span class="fw-bold text-dark fs-5">⏳ {{ food.end_time.strftime('%Y-%m-%d %H:%M') }}</span>
+                        </div>
+                        
+                        <div class="mt-auto pt-4 border-top">
+                            <div class="d-flex justify-content-between align-items-end mb-4">
+                                <span class="text-secondary fw-bold">總計金額</span>
+                                <div class="text-end">
+                                    {% if food.original_price %}
+                                        <span class="text-muted text-decoration-line-through me-2">原價 ${{ food.original_price }}</span>
+                                    {% endif %}
+                                    <span class="fs-1 fw-bold text-success">{{ '免費' if food.discount_price == 0 else '$' ~ food.discount_price }}</span>
+                                </div>
+                            </div>
+                            
+                            {% if session.get('role') == 'student' %}
+                                <form action="{{ url_for('food.reserve', food_id=food.id) }}" method="POST" class="d-flex gap-3">
+                                    <div class="input-group" style="width: 140px;">
+                                        <button class="btn btn-outline-secondary" type="button" onclick="document.getElementById('quantity').stepDown()">-</button>
+                                        <input type="number" class="form-control text-center fw-bold" id="quantity" name="quantity" value="1" min="1" max="{{ food.portion }}" readonly>
+                                        <button class="btn btn-outline-secondary" type="button" onclick="document.getElementById('quantity').stepUp()">+</button>
+                                    </div>
+                                    <button type="submit" class="btn btn-success flex-grow-1 rounded-pill shadow-sm fs-5 fw-bold transition-hover">💳 預約保留</button>
+                                </form>
+                            {% elif session.get('role') == 'restaurant' %}
+                                <div class="alert alert-secondary text-center rounded-3 mb-0">唯有學生身份能執行預約功能</div>
+                            {% else %}
+                                <a href="{{ url_for('auth.login') }}" class="btn btn-outline-success w-100 rounded-pill fs-5 fw-bold transition-hover">請先登入後預約</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row justify-content-center mt-4">
+    <div class="col-lg-8">
+        <div class="card shadow border-0 rounded-4">
+            <div class="card-body p-5">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h3 class="fw-bold text-secondary mb-0">✏️ 編輯已發佈內容</h3>
+                    <!-- 加入刪除機制的表單與按鈕 -->
+                    <form action="{{ url_for('food.delete', food_id=food.id) }}" method="POST" onsubmit="return confirm('您確定要永久刪除此剩食資訊嗎？此動作無法復原！');">
+                        <button type="submit" class="btn btn-outline-danger btn-sm rounded-pill px-3">🗑️ 刪除</button>
+                    </form>
+                </div>
+                
+                <form action="{{ url_for('food.edit', food_id=food.id) }}" method="POST">
+                    <div class="mb-3">
+                        <label for="name" class="form-label fw-bold">餐點名稱</label>
+                        <input type="text" class="form-control bg-light" id="name" name="name" value="{{ food.name }}" required>
+                    </div>
+                    
+                    <div class="row g-3">
+                        <div class="col-md-4 mb-3">
+                            <label for="portion" class="form-label fw-bold">剩餘提供份量</label>
+                            <input type="number" class="form-control bg-light" id="portion" name="portion" value="{{ food.portion }}" min="0" required>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="original_price" class="form-label fw-bold">原價</label>
+                            <input type="number" class="form-control bg-light" id="original_price" name="original_price" value="{{ food.original_price or '' }}">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="discount_price" class="form-label fw-bold">特惠價</label>
+                            <input type="number" class="form-control bg-light" id="discount_price" name="discount_price" value="{{ food.discount_price }}" required>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="description" class="form-label fw-bold">餐點描述</label>
+                        <textarea class="form-control bg-light" id="description" name="description" rows="3">{{ food.description or '' }}</textarea>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="end_time" class="form-label fw-bold">預計強制下架時間</label>
+                        <input type="datetime-local" class="form-control bg-light" id="end_time" name="end_time" value="{{ food.end_time.strftime('%Y-%m-%dT%H:%M') }}" required>
+                    </div>
+                    
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-success px-4 rounded-pill fw-bold col-8 transition-hover">儲存更新</button>
+                        <a href="{{ url_for('order.manage') }}" class="btn btn-light rounded-pill fw-bold col-4 border">取消返回</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

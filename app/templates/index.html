@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row align-items-center mb-5">
+    <div class="col-lg-6 mb-4 mb-lg-0">
+        <h1 class="display-4 fw-bold text-dark mb-3">
+            拯救校園美食，<br>
+            <span class="text-success">減碳愛地球</span>
+        </h1>
+        <p class="lead text-secondary mb-4">
+            校園內的優質餐點不該被浪費！在這裡，學生能以優惠的價格享受美食，餐廳能減少報廢成本，同時我們一起為減緩地球暖化盡一份心力。
+        </p>
+        <div class="d-flex gap-3">
+            <a href="{{ url_for('food.index') }}" class="btn btn-success btn-lg shadow-sm px-4 rounded-pill">立即找尋美食</a>
+            {% if not session.get('user_id') %}
+            <a href="{{ url_for('auth.register') }}" class="btn btn-outline-secondary btn-lg rounded-pill px-4 bg-white">加入我們</a>
+            {% endif %}
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <!-- Dashboard / Impact Stats Placeholder -->
+        <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+            <div class="card-body p-5 bg-gradient" style="background-color: #f8fff9;">
+                <h3 class="fw-bold mb-4 text-center text-success">🌍 我們的永續影響力</h3>
+                <div class="row text-center z-1 position-relative">
+                    <div class="col-6 mb-3">
+                        <div class="p-3 bg-white rounded-4 shadow-sm border border-light transition-hover">
+                            <div class="display-5 fw-bold text-primary mb-0">1,240</div>
+                            <div class="text-muted small mt-2">已拯救餐點 (份)</div>
+                        </div>
+                    </div>
+                    <div class="col-6 mb-3">
+                        <div class="p-3 bg-white rounded-4 shadow-sm border border-light transition-hover">
+                            <div class="display-5 fw-bold text-success mb-0">850</div>
+                            <div class="text-muted small mt-2">減少碳排 (kg)</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-4 text-center small text-muted">
+                    統計數據會隨著平台使用持續成長！
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

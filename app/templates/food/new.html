@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row justify-content-center mt-4 mb-5">
+    <div class="col-lg-8">
+        <div class="card shadow-lg border-0 rounded-4">
+            <div class="card-body p-5">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2 class="fw-bold text-success mb-0">發佈打烊剩食</h2>
+                    <a href="{{ url_for('order.manage') }}" class="btn btn-light rounded-pill btn-sm text-secondary">返回管理面板</a>
+                </div>
+                
+                <form action="{{ url_for('food.new') }}" method="POST" enctype="multipart/form-data">
+                    <div class="row g-3">
+                        <div class="col-md-8 mb-3">
+                            <label for="name" class="form-label fw-bold">餐點名稱 <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control form-control-lg bg-light" id="name" name="name" placeholder="例如：總匯三明治、炸豬排定食" required>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="portion" class="form-label fw-bold">可提供份量 <span class="text-danger">*</span></label>
+                            <input type="number" class="form-control form-control-lg bg-light" id="portion" name="portion" min="1" required>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="description" class="form-label fw-bold">餐點描述 (選填)</label>
+                        <textarea class="form-control bg-light" id="description" name="description" rows="3" placeholder="簡易描述餐點內容或過敏原提示..."></textarea>
+                    </div>
+
+                    <div class="row g-3">
+                        <div class="col-md-6 mb-3">
+                            <label for="original_price" class="form-label fw-bold">原價 (選填)</label>
+                            <div class="input-group">
+                                <span class="input-group-text">$</span>
+                                <input type="number" class="form-control bg-light" id="original_price" name="original_price" min="0">
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="discount_price" class="form-label fw-bold text-success">惜食優惠價 <span class="text-danger">*</span></label>
+                            <div class="input-group">
+                                <span class="input-group-text">$</span>
+                                <input type="number" class="form-control bg-light" id="discount_price" name="discount_price" min="0" required>
+                            </div>
+                            <div class="form-text mt-1 text-success">填寫 0 代表免費贈送</div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="end_time" class="form-label fw-bold">預計強制下架時間 <span class="text-danger">*</span></label>
+                        <input type="datetime-local" class="form-control form-control-lg bg-light" id="end_time" name="end_time" required>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label for="image" class="form-label fw-bold">上傳實物照片 (選填)</label>
+                        <input type="file" class="form-control bg-light" id="image" name="image" accept="image/png, image/jpeg, image/jpg">
+                    </div>
+                    
+                    <div class="d-grid mt-5">
+                        <button type="submit" class="btn btn-success btn-lg rounded-pill fw-bold shadow-sm transition-hover">立即發佈資訊</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

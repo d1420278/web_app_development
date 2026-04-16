@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row mt-4 mb-5">
+    <!-- 管理首頁：左右切割或上下區塊區分發布餐點狀態與未核銷訂單 -->
+    
+    <div class="col-12 mb-4 d-flex justify-content-between align-items-center">
+        <h2 class="fw-bold text-success mb-0">🧑‍🍳 餐廳管理面板</h2>
+        <a href="{{ url_for('food.new') }}" class="btn btn-success btn-lg rounded-pill shadow-sm px-4 fw-bold">+ 發佈新剩食</a>
+    </div>
+
+    <div class="col-lg-7 mb-4">
+        <!-- 未核銷訂單 -->
+        <div class="card border-0 shadow-sm rounded-4 h-100">
+            <div class="card-header bg-warning bg-gradient text-dark fw-bold py-3 px-4 border-0 rounded-top-4">
+                🔔 待核銷預約與取餐 ({{ reserved_orders|length }} 筆)
+            </div>
+            <div class="card-body p-0">
+                {% if reserved_orders %}
+                <div class="list-group list-group-flush rounded-bottom-4">
+                    {% for order in reserved_orders %}
+                    <div class="list-group-item p-4">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <span class="badge bg-light text-dark mb-2">單號 #{{ "%06d" | format(order.id) }}</span>
+                                <h5 class="fw-bold mb-1">{{ order.food.name }} <span class="text-danger">({{ order.quantity }} 份)</span></h5>
+                                <div class="text-muted small">
+                                    👤 預約學生：{{ order.student.name }}<br>
+                                    🕒 預約時間：{{ order.created_at.strftime('%m-%d %H:%M') }}
+                                </div>
+                            </div>
+                            <!-- 核銷按鈕 -->
+                            <form action="{{ url_for('order.complete', order_id=order.id) }}" method="POST">
+                                <button type="submit" class="btn btn-success btn-lg rounded-circle shadow-sm" style="width: 60px; height: 60px;" title="確認學生已取餐">
+                                    ✔️
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="text-center py-5 text-muted">
+                    目前沒有待處理的預約訂單。
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-5 mb-4">
+        <!-- 進行中的商品列表 -->
+        <div class="card border-0 shadow-sm rounded-4 h-100">
+            <div class="card-header bg-success bg-gradient text-white fw-bold py-3 px-4 border-0 rounded-top-4">
+                🏷️ 您發佈的剩食清單
+            </div>
+            <div class="card-body p-0">
+                <div class="list-group list-group-flush rounded-bottom-4" style="max-height: 600px; overflow-y: auto;">
+                    {% if foods %}
+                        {% for food in foods %}
+                        <div class="list-group-item px-4 py-3 {% if food.status != 'available' %}bg-light opacity-75{% endif %}">
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <h6 class="fw-bold mb-0 text-dark">{{ food.name }}</h6>
+                                {% if food.status == 'available' %}
+                                    <span class="badge bg-success rounded-pill">供應中</span>
+                                {% else %}
+                                    <span class="badge bg-secondary rounded-pill">已售罄/下架</span>
+                                {% endif %}
+                            </div>
+                            <div class="d-flex justify-content-between align-items-end mt-2">
+                                <div class="small text-muted">
+                                    剩餘 <strong>{{ food.portion }}</strong> 份<br>
+                                    時間迄於 <strong>{{ food.end_time.strftime('%H:%M') }}</strong>
+                                </div>
+                                <a href="{{ url_for('food.edit', food_id=food.id) }}" class="btn btn-outline-secondary btn-sm rounded-pill px-3">編輯 / 管理</a>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="text-center py-5 text-muted">
+                            尚未發佈任何剩餐資訊。
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

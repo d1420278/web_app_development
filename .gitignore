@@ -1,0 +1,23 @@
+# 環境變數
+.env
+.env.local
+
+# Python 快取與虛擬環境
+__pycache__/
+*.pyc
+.venv/
+venv/
+env/
+
+# SQLite 資料庫
+instance/
+*.db
+*.sqlite3
+
+# 靜態上傳檔 (看需求，若為測試資料可不進版控)
+app/static/images/uploads/*
+!app/static/images/uploads/.gitkeep
+
+# IDE 相關
+.vscode/
+.idea/

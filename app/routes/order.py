@@ -1,33 +1,46 @@
-from flask import Blueprint, render_template, request, redirect, url_for, session
+from flask import Blueprint, render_template, request, redirect, url_for, session, flash
+from app.models.food import Food
+from app.models.order import Order
+from app.models import db
 
 order_bp = Blueprint('order', __name__, url_prefix='/orders')
 
 @order_bp.route('/my', methods=['GET'])
 def my_orders():
-    """
-    學生預約紀錄列表
-    輸入: 無
-    處理邏輯: 讀取當前 Session 中的 user_id，取得建立的所有 Orders
-    輸出: 渲染 order/my.html
-    """
-    pass
+    if session.get('role') != 'student':
+        flash('此頁面僅限學生帳號存取！', 'warning')
+        return redirect(url_for('auth.login'))
+        
+    orders = Order.query.filter_by(student_id=session['user_id']).order_by(Order.created_at.desc()).all()
+    return render_template('order/my.html', orders=orders)
 
 @order_bp.route('/manage', methods=['GET'])
 def manage():
-    """
-    餐廳管理訂單後台
-    輸入: 無
-    處理邏輯: 取得當前餐廳所擁有的 Foods 中的相關被預約 Orders 資訊
-    輸出: 渲染 order/manage.html
-    """
-    pass
+    if session.get('role') != 'restaurant':
+        flash('只有餐廳業者可進入管理後臺！', 'warning')
+        return redirect(url_for('main.index'))
+        
+    # Find all orders linked to foods posted by this restaurant
+    my_foods = Food.query.filter_by(restaurant_id=session['user_id']).order_by(Food.created_at.desc()).all()
+    food_ids = [f.id for f in my_foods]
+    
+    if food_ids:
+        reserved_orders = Order.query.filter(Order.food_id.in_(food_ids), Order.status == 'reserved').order_by(Order.created_at.desc()).all()
+        completed_orders = Order.query.filter(Order.food_id.in_(food_ids), Order.status == 'completed').order_by(Order.completed_at.desc()).limit(15).all()
+    else:
+        reserved_orders = []
+        completed_orders = []
+    
+    return render_template('order/manage.html', foods=my_foods, reserved_orders=reserved_orders, completed_orders=completed_orders)
 
 @order_bp.route('/<int:order_id>/complete', methods=['POST'])
 def complete(order_id):
-    """
-    核銷訂單操作
-    輸入: order_id
-    處理邏輯: 限定餐廳身份，調用 Model 將訂單狀態改為 'completed' 並寫入 completed_at 時間戳記
-    輸出: 重導向到 /orders/manage 以重新載入頁面
-    """
-    pass
+    if session.get('role') != 'restaurant':
+        return redirect(url_for('main.index'))
+        
+    order = Order.get_by_id(order_id)
+    if order and order.food.restaurant_id == session['user_id'] and order.status == 'reserved':
+        order.complete_order() 
+        flash(f'預約單 #{order.id} 已經成功核銷！', 'success')
+        
+    return redirect(url_for('order.manage'))
